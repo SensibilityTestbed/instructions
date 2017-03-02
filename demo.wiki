@@ -1,0 +1,172 @@
+[[PageOutline]]
+
+= Overview =
+In this 30-minute tutorial we will walk you through your first experiment with Sensibility Testbed. You will install the  Sensibility Testbed app (including your user keys) on your Android phone or tablet, remote-access it from your laptop, and finally run a few demo sensor scripts.
+
+-----
+
+= 1. Set Up The Sensibility Testbed App =
+
+Sensibility Testbed has a native Android installer package (APK) which we will make to include your user key in this part of the tutorial. This allows you to access your device (and every other device using that installer, e.g. your friends') using an {{{ssh}}}-like experiment manager called 'seash'.
+
+Here's what to do:
+ * On your laptop, navigate to the [https://sensibilityclearinghouse.poly.edu/custominstallerbuilder/fastlane Custom Installer Builder Fastlane site].
+* The custom builder creates a key pair for you. Download both the private and public keys, and take good care of them! If lost, you won't be able to access devices running this custom install anymore!
+* Once the keys are downloaded, proceed to download the preconfigured Android installer on your Android device. 
+
+We suggest to bookmark the download page so you can refer back to it later on. Send the link to your Android device now, e.g. by scanning the QR code, syncing bookmarks, or plain ol' email. Alternatively, [https://goo.gl/ shorten it] and type it in the address bar in your Android's browser.
+
+-----
+
+On your Android device, a support app is needed so that Sensibility Testbed can access sensors. Please install it first:
+ * The app is called [https://github.com/damonkohler/sl4a/tree/master/android SL4A], ''Scripting Layer for Android''.
+ * Download the APK from [https://android-scripting.googlecode.com/files/sl4a_r6.apk Google Code].
+ * Temporarily enable installation of APKs from untrusted sources.
+ * Launch the SL4A installer and review the set of required permissions.
+You don't need to start SL4A after installation; Sensibility Testbed will do this automatically.
+
+Still on your Android device, let's now proceed to install the Sensibility Testbed app from Google Play, using the customized installer we created before.
+ * Open the link to the customized installer bookmarked previously. Make sure it launches Google Play.
+ * In the Google Play app, tap "Install" and review the requested permissions.
+ * Once installed, start the app and follow the on-screen instructions to complete the installation.
+  * ''Note:'' The Sensibility Testbed installer now downloads your previously created Custom Installer which contains the experiment runtime.
+  * After the download and Python unpacking processes are completed, please tap 'Install' to finalize Sensibility Testbed's setup. Depending on the speed of your device, the process can take a few minutes to finish.
+
+(In the unlikely case of 'benchmark errors' during install, please choose to 'Continue'. Kindly [ReportingProblems report your problem] to help us fix it in future releases.)
+
+And this already concludes Part 1 of the tutorial -- your device is now part of the Sensibility Testbed, awaiting your command. Make sure it's connected to the Internet, e.g. over !WiFi.
+
+-----
+
+= 2. Accessing Your Device =
+
+In this step, you will set up '''seash''' on your laptop so as to access your Android device's Sensibility install.
+
+ * First, download the Seattle demokit which contains seash from [https://sensibilityclearinghouse.poly.edu/demokit/seattle_demokit.zip this link], save it to your system and extract it. It will create a folder named {{{seattle_demokit}}}. Launch it like so: {{{cd seattle_demokit ;; python seash.py}}}. This will approximately result in this:
+
+{{{
+$ python seash.py
+- You can press the Tab key to enable tab complete when typing commands.
+
+Enabled modules: clearinghouse, factoids, geoip, modules, variables 
+
+ !> 
+}}}
+
+ Note to Windows users: You need Python 2.5 - 2.7 on your machines. Download it from [http://www.python.org/ Python home page]. 
+
+ * Seash needs your key pair now in order to contact your Android device. Copy the key files to your seash directory. With your keys in place, let's continue the session:
+
+{{{
+ !> loadkeys albert
+ !> as albert
+albert@ !> browse
+['131.130.125.5:1224']
+Added targets: %1(131.130.125.5:1224:v1)
+Added group 'browsegood' with 1 target
+albert@ !> on %1
+albert@%1 !> list
+  ID Own                      Name     Status              Owner Information
+  %1  *      131.130.125.5:1224:v1      Fresh                               
+albert@%1 !> 
+}}}
+
+In the above snippet, we first load user keys for username "albert".
+{{{
+#!comment
+The {{{timeout}}} command tells seash to wait a little longer for our nodes to react. (This comes in handy for less powerful devices connected over flaky wireless links). Finally, 
+}}}
+
+seash is then told to go looking for devices ({{{browse}}}) using Albert's user keys for identification (literally, {{{as albert}}}).
+
+If your device just booted up, it will take a little while for it to appear using {{{browse}}}. 
+
+'''For live experimentation and iterative coding/debugging on your device, we advise configuring !WiFi to "always-on".''' 
+
+
+In the shell log above, we've directed seash to speak to your device, called {{{%1}}} for short, and {{{list}}}ed its status information. You are the owner of this install, and the install is otherwise fresh. (For details on using seash, please refer to [https://seattle.poly.edu/wiki/RepyTutorial#Executingprogramsremotelyinvessels the seash tutorial]).
+
+You can now run code inside the Sensibility Testbed runtime on your phone/tablet (which in itself is pretty cool), but we are in for sensors!
+
+
+= 3. Demo Time! =
+And now: The fun part! Let's run some code that actually uses your device's sensors. 
+{{{
+#!comment
+ * Get demo script [https://github.com/yyzhuang/sensibility/blob/master/sensortest.r2py sensortest.r2py].
+}}}
+ * Use seash to complete the following steps on your device, uploading files from the seash tarball:
+
+{{{
+albert@%1 !> upload sensortest.r2py
+albert@%1 !> show files
+Files on '131.130.125.5:1224:v1': 'sensortest.r2py'
+albert@%1 !>
+}}}
+(Don't worry if uploading doesn't succeed on first try. Just retry, that will usually do.)
+
+ * All of our files are in place! Still in seash:
+
+{{{
+albert@%1 !> start sensortest.r2py 
+}}}
+
+The above command outputs all the sensor values from each facade. If you would like to read a specific sensor value from a particular facade, use the following command:
+
+{{{
+albert@%1 !> start sensortest.r2py BatteryFacade batteryGetLevel
+}}}
+
+!BatteryFacade is the name of a facade, batteryGetLevel is the specific sensor value you would like to read. {{{start dylink.r2py sensortest.r2py BatteryFacade}}} obtains all the sensor values in !BatteryFacade. If any arguments are needed to produce a sensor value, provide the required arguments at the end of the command. For example, 
+
+{{{
+albert@%1 !> start sensortest.r2py AndroidFacade vibrate 3000
+}}}
+
+lets your device vibrate for 3000 milliseconds. 
+
+ * Check the device's experiment log from time to time: Type {{{show log}}} in seash.
+ * You should see messages of the demo script showcasing sensors scroll by.
+ * Even if you don't look at the log, you will notice how your device starts to beep, vibrates, speaks to you etc. You've just witnessed the power of Sensibility Testbed!
+
+Here is an example of collecting [https://github.com/yyzhuang/sensibility/blob/master/accelerometer.r2py accelerometer] data every few seconds. To run this example, upload the following files from seash:
+
+{{{
+albert@%1 !> upload dylink.r2py
+albert@%1 !> upload sensorlib.r2py 
+albert@%1 !> upload accelerometer.r2py
+albert@%1 !> show files
+Files on '131.130.125.5:1224:v1': 'dylink.r2py sensorlib.r2py accelerometer.r2py'
+albert@%1 !>
+}}}
+
+The this will start the program:
+
+{{{
+albert@%1 !> start dylink.r2py accelerometer.r2py 
+}}}
+
+You will see output like this:
+
+{{{
+========================================
+Running program: dylink.r2py
+Arguments: ['accelerometer.r2py']
+========================================
+Using port 63104 to get sensor data.
+startSensingTimed data:  None 
+sensorsReadAccelerometer data:  [-0.24858093000000001, -0.10961914, 10.367844] 
+sensorsReadAccelerometer data:  [-0.14027405000000001, -0.11437988, 10.552322] 
+sensorsReadAccelerometer data:  [-0.24501038, -0.090576169999999998, 10.380936]
+}}}
+
+These are accelerations in x/y/z axes. The z value will be close to 9.8 if the phone is stationary (gravity).
+
+-----
+
+= Repy V2 and Sensor APIs =
+== Repy V2 API ==
+All the above code is written in Repy V2. The [https://seattle.poly.edu/wiki/RepyV2API Repy V2 API] and [https://seattle.poly.edu/wiki/RepyV2Tutorial tutorial] how to use it are listed in the links provided.
+
+== Sensor API ==
+This page lists all the [https://sensibilitytestbed.com/projects/project/wiki/sensors currently supported sensors], and how to use our API to access these sensors.

@@ -1,0 +1,950 @@
+[[PageOutline]]
+
+= Sensor Library for Sensibility Testbed =
+
+To use the sensors on the Sensibility Testbed is straight forward. We first provide our sensor API for you to write Python-styled code to obtain sensor data. Next, we have an experiment tool {{{seash}}} that allows you to upload your code to a remote Android smartphone or tablet. Finally, security layers can be implemented and applied to your sensor code to blur sensor data in order to protect device owner's privacy.
+
+== Writing the Code==
+We provide some code example that uses our sensor API. All the available calls will be listed in the next section. 
+
+=== Location Example ===
+First, using location as an example. Since location on Android devices depends on external services (GPS, !WiFi or cellular networks), we highly recommend that you include some error handling in your code, such as
+
+{{{
+MAX_TIME = 5
+starttime = getruntime()
+
+while(getruntime() - starttime < MAX_TIME):
+  try:
+    location = get_location()
+    if location:
+      break
+  except Exception: 
+    sleep(0.02)
+}}}
+
+The call `get_location()` (details in the next section) returns real-time location data from the device. However, when this call cannot get any location data from those external services, or `location == None`, we can try to get the previously cached location on the device, using `get_lastknown_location()`:
+
+{{{
+if not location:
+  try:
+    location = get_lastknown_location()
+  except Exception: 
+    log("can't locate using get_lastknown_location().. exit!\n")
+    exitall()
+}}}
+
+The coordinates of the device can then be extracted from the data returned:
+   
+{{{
+latitude = location["latitude"]
+longitude = location["longitude"]
+}}}
+
+=== Accelerometer Example ===
+
+Location sensor is more complex to handle than other sensors. A less complex one is the accelerometer. Using accelerometer as another (less complex) example, we first need to start sensing on your phone by calling
+   
+{{{
+start_sensing(sensor_number, delay_time)
+}}}
+   
+Such that your phone will start recording sensor data. sensor_number is any of the following integer: 1 = All, 2 = Accelerometer, 3 = Magnetometer and 4 = Light; delay_time: minimum time between readings in ms, also in integer. Then call
+   
+{{{
+get_acceleration()
+}}}
+   
+This will return the most recently received accelerometer value in a list, e.g., [0.3830723, -0.8036005, 10.036493] as the acceleration on the X, Y, and Z axis. To stop recording sensor data, call
+   
+{{{
+stop_sensing()
+}}}
+
+== Sensor API ==
+Here is a list of all the sensors currently supported, and the API to access these sensors. 
+
+=== Battery ===
+
+==== get_battery_info() ====
+
+<Purpose> 
+
+     Get battery data from a device. The battery information is returned as a dict.
+
+<Exceptions>
+    
+    !BatteryNotFoundException (descends from !RepyException) when no battery is found on the device. 
+
+<Side Effects>
+
+    When !BatteryNotFoundException is raised, the user of this method cannot get any battery information.
+
+<Resource Consumption>
+
+    Battery information lookup.
+
+<Returns>
+
+    Battery information as a dict, such as `{'status': 3, 'temperature': 257, 'level': 99, 'battery_present': True, 'plugged': 2, 'health': 2, 'voltage': 4186, 'technology': 'Li-ion'}`.
+
+    Return values for status: 1 - unknown; 2 - charging; 3 - discharging; 4 - not charging; 5 - full.
+
+    Return values for temperature: in tenths of a degree Centigrade. E.g., 257 is 25.7 celcius.
+
+    Return values for level: in percent (%).
+
+    Return values for plugged: -1 - unknown; 0 - unplugged; 1 - power source is an AC charger; 2 - power source is a USB port.
+
+    Return values for health: 1 - unknown; 2 - good; 3 - overheat; 4 - dead; 5 - over voltage; 6 - unspecified failure.
+
+    Return values for voltage: in millivolts.
+
+[[BR]]
+=== Bluetooth ===
+
+==== get_bluetooth_info() ====
+
+<Purpose>
+    Get bluetooth data from a devices. The bluetooth information is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    When bluetooth is not enabled, the user of this method cannot get any bluetooth information.
+
+<Resource Consumption>
+    Bluetooth information lookup. 
+
+<Returns>
+    Bluetooth information as a dict, such as `{'state': True, 'scan_mode': 3, 'local_name': 'GT-P1000'}`.
+
+    Return values for scan_mode: -1 - when Bluetooth is disabled; 0 - if non discoverable and non connectable; 1 - connectable non discoverable; 3 - connectable and discoverable.
+
+[[BR]]
+=== Cellular network ===
+
+==== is_roaming() ====
+<Purpose>
+    Return if a phone is roaming (True or False).  
+
+<Arguments>
+    None
+
+<Exceptions>
+    SIMNotFoundException (descends from !RepyException) when no SIM card is found on the device.
+
+<Side Effects>
+    When no SIM card is found, no cellular information can be obtained.
+
+<Resource Consumption>
+    Lookup if phone is roaming. 
+
+<Returns>
+    A boolean variable indicating if the phone is roaming. 
+
+-----
+
+==== get_cellular_provider_info() ====
+
+<Purpose>
+    Get cellular provider info from a devices. The cellular network information, current cellular operator code (MNC+MCC), and operator name, is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    SIMNotFoundException (descends from !RepyException) when no SIM card is found on the device.
+
+<Side Effects>
+    When no SIM card is found, no cellular provider info can be obtained.
+
+<Resource Consumption>
+    Cellular network provider information lookup. 
+
+<Returns>
+    Cellular provider info as a dict, such as `{‘network_operator’: 310260, ‘network_operator_name’: ‘T-Mobile’}.`
+
+-----
+
+==== get_cell_info() ====
+
+<Purpose>
+    Get cellular network info from a devices. The cellular network information, current cellular cell ID, neighboring cells, is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    SIMNotFoundException (descends from !RepyException) when no SIM card is found on the device.
+
+<Side Effects>
+    When no SIM card is found, no cellular information can be obtained.
+
+<Resource Consumption>
+    Cellular network information lookup. 
+
+<Returns>
+    Cellular info as a dict, such as `{‘cellID’: {‘lac’: 32115, ‘cid’: 26742}, ‘neighboring_cell’: [{‘rssi’: 11, ‘cid’: 26741}, {‘rssi’: 9, ‘cid’: 40151}, {‘rssi’: 5, ‘cid’: 40153}]}`.
+
+-----
+
+==== get_SIM_info() ====
+
+<Purpose>
+    Get SIM card info from a devices. The SIM card information, current SIM card state, SIM card operator, SIM card operator name, SIM card country code, is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    SIMNotFoundException (descends from !RepyException) when no SIM card is found on the device.
+
+<Side Effects>
+    When no SIM card is found, no information can be obtained.
+
+<Resource Consumption>
+    SIM card information lookup. 
+
+<Returns>
+    SIM card info as a dict, such as `{‘SIM_operator’: 310260, ‘SIM_operator_name’: ‘’, ‘SIM_country_code’: ‘us’, ‘SIM_state’: ‘ready’}`.
+
+-----
+
+==== get_phone_info() ====
+
+<Purpose>
+    Get phone info from a devices. The phone information, current phone state, phone type, network type, is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Phone information lookup. 
+
+<Returns>
+    Phone info as a dict, such as `{‘phone_state’: {‘incomingNumber’: ‘’, ‘state’: ‘idle’}, ‘phone_type’: ‘gsm’, ‘network_type’: 'edge'}. When no SIM card is available, the phone info dict would be, e.g., {‘phone_state’: {}, ‘phone_type’: ‘gsm’, ‘network_type’: 'unknown'}`.
+
+-----
+
+==== get_cellular_signal_strengths() ====
+
+<Purpose>
+    Get the current signal strengths, in dictionary of gsm_signal_strength.
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current signal strengths lookup. 
+
+<Returns>
+    Signal strengths info as a dict, such as `{"gsm_signal_strength": 8, "evdo_ecio": -1, "gsm_bit_error_rate": -1, "cdma_ecio": -1, "cdma_dbm": -1, "evdo_dbm": -1}`.
+
+[[BR]]
+=== Location ===
+
+==== get_location() ====
+
+<Purpose>
+    Get original location data from GPS or network or passive. The location information is returned as a dict.
+
+<Arguments>
+    None
+
+<Exceptions>
+    !LocationNotFoundException (descends from !RepyException) when no location information is found. 
+
+<Side Effects>
+    When !LocationNotFoundException is raised, the user of this method needs to try several times. If this still fails, then should try `get_lastknown_location()`.
+
+<Resource Consumption>
+    GPS or network location lookup. 
+
+<Returns>
+    Location information is returned as a dict, such as `{'bearing': 0, 'altitude': 0, 'time': x, 'longitude': x, 'provider': 'network', 'latitude': x, 'speed': 0, 'accuracy': x}`.
+
+-----
+
+
+==== get_lastknown_location() ====
+
+<Purpose>
+  Get original _last-known_ location data from GPS/network/passive. The location information is returned as a dict.
+
+<Arguments>
+  None
+
+<Exceptions>
+  !LocationNotFoundException (descends from !RepyException) when the returned location information is {'passive': None, 'network': None, 'gps': None}. 
+
+<Side Effects>
+  None.
+
+<Resource Consumption>
+  Lookup cached location information on the device. 
+
+<Returns>
+  Location information is returned as a dict with three keys: passive, network, and gps. Each key value is a dict in the same format as the value returned by `get_location()`. For example, `{'passive': {'bearing': 0, 'altitude': 0, 'time': x, 'longitude': x, 'provider': 'network', 'latitude': x, 'speed': 0, 'accuracy': x}, 'network': {'bearing': 0, 'altitude': 0, 'time': x, 'longitude': x, 'provider': 'network', 'latitude': x, 'speed': 0, 'accuracy': x}, 'gps': None}`.
+
+-----
+
+
+==== get_geolocation(latitude, longitude, max_results) ====
+
+<Purpose>
+    Obtain a list of addresses for the given latitude and longitude. The addresses information is returned as a dict, which is converted to ASCII using unicode_scrubber.
+
+<Arguments>
+    latitude (double): latitude of a location;
+
+    longitude (double): longitude of a location;
+
+    max_results (Integer): maximum number of results (normally =1).
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Geolocation lookup. 
+
+<Returns>
+    Geolocation (address) as a list, such as `[{'thoroughfare': 'Some Street', 'locality': u'Some Town', 'sub_admin_area': 'Some Borough', 'admin_area': 'Some City', 'feature_name': 'House Numbers', 'country_code': 'GB', 'country_name': 'United Kingdom', 'postal_code': 'ST1 1'}] `.
+
+[[BR]]
+=== Media ===
+
+==== microphone_record(filename, duration) ====
+
+<Purpose>
+    Records audio from the microphone for duration seconds, and saves it as filename. 
+
+<Arguments>
+    filename (string): the audio file name that will be saved as (e.g., record.mp4);
+
+    duration (Integer): the duration to record the audio.
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Record audio and save as a file on the device. 
+
+<Returns>
+    None.
+
+-----
+
+==== is_media_playing() ====
+
+<Purpose>
+    Return if media file is playing. (True / False). 
+
+<Arguments>
+    None.
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Lookup if media file is playing. 
+
+<Returns>
+    A boolean variable indicating if a media file is playing on the device.
+
+-----
+
+==== get_media_play_info() ====
+
+<Purpose>
+    Return information on current media. 
+
+<Arguments>
+    None.
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Lookup media play information. 
+
+<Returns>
+    Media play information as a dict.
+
+  If no media file is loaded, the result is `{'loaded': False, 'tag': 'default'}`. 
+
+  If there is a media file being played, the result is `{'url': filepath, 'looping': False, 'tag': 'default', 'loaded': True, 'duration': 17100,   'position': 100, 'isplaying': True}`. 
+  
+  If the media file is finished playing, the result is `{'url': filepath, 'looping': False, 'tag': 'default', 'loaded': True, 'duration': 17100,   'position': 17020, 'isplaying': False}`.
+
+-----
+
+==== is_tts_speaking() ====
+
+<Purpose>
+    Return if text to speech (tts) is currently in progress (True/False).
+
+<Arguments>
+    None.
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Lookup if tts is currently in progress. 
+
+<Returns>
+    A boolean vaiable indicating if tts is currently in progress on the device. 
+
+
+-----
+
+==== tts_speak(message) ====
+
+<Purpose>
+    Speaks the provided message via text to speech (tts). 
+
+<Arguments>
+    message (string): the message to speak.
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Text to speech speaks the provided message.  
+
+<Returns>
+    None.
+
+[[BR]]
+=== Settings ===
+
+==== get_mode_settings() ====
+
+<Purpose>
+    Get the current settings about mode (airplane mode, ringer silent mode, vibrate mode), in dictionary of mode_settings. 
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current mode settings lookup. 
+
+<Returns>
+    Signal strengths info as a dict, such as `{"airplane_mode": False, "ringer_silent_mode": True, "vibrate_mode": {'ringer_vibrate': True, 'notification_vibrate': False}}`.
+
+-----
+
+==== get_screen_settings() ====
+
+<Purpose>
+    Get the current settings about screen (screen on/off, screen brightness, screen timeout), in dictionary of screen_settings. 
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current screen settings lookup. 
+
+<Returns>
+    Signal strengths info as a dict, such as `{"screen_on": True, "screen_brightness": 200, "screen_timeout": 60}`.
+
+-----
+
+==== get_media_volume() ====
+
+<Purpose>
+    Get the current settings about media volume (current media volume, maximum media volume), in dictionary of media_volume. 
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current media volume settings lookup. 
+
+<Returns>
+    Signal strengths info as a dict, such as `{"media_volume": xx, "max_media_volume": xxx}`.
+
+-----
+
+==== get_ringer_volume() ==== 
+
+<Purpose>
+    Get the current settings about ringer volume (current ringer volume, maximum ringer volume), in dictionary of ringer_volume. 
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current ringer volume settings lookup. 
+
+<Returns>
+    Signal strengths info as a dict, such as `{"ringer_volume": xx, "max_ringer_volume": xxx}`.
+
+[[BR]]
+=== Sensors ===
+
+==== start_sensing(sensor_number, delay_time) ====
+
+<Purpose>
+    Starts recording sensor data to be available for polling. 
+
+<Arguments>
+    `sensor_number` (Integer): 1 = All, 2 = Accelerometer, 3 = Magnetometer and 4 = Light 
+
+    `delay_time` (Integer): Minimum time between readings in ms. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Starts recording sensor data. 
+
+<Returns>
+    None.
+
+-----
+
+==== stop_sensing() ====
+
+<Purpose>
+    Stops recording sensor data to be available for polling. 
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Stops recording sensor data. 
+
+<Returns>
+    None.
+
+-----
+
+==== get_sensors() ==== 
+
+<Purpose>
+    Get the most recently recorded sensor data (accelerometer, magnetic and orientation), in dictionary of sensors. 
+
+<Arguments>
+    None
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Current sensors (accelerometer, magnetic and orientation) lookup. 
+
+<Returns>
+    Sensors as a dict, such as `{"time": 1.386305361412E9, "roll": -0.034543427079916, "zforce": 9.959879, "yforce": -0.842759, "yMag": 164.9375, "xMag": -3.1875, "azimuth": 0.005331491399556398, "xforce": 0.3439138, "zMag": -67.75, "pitch": 0.08443046659231186, "accuracy":3}`.
+
+-----
+
+==== get_sensors_accuracy() ====
+
+<Purpose>
+    Get the most recently received accuracy value. 
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Look up sensor accuracy. 
+
+<Returns>
+    Returns the most recently received accuracy value, e.g., 3 (highest accuracy).
+
+-----
+
+==== get_light() ====
+
+<Purpose>
+    Get the most recently received light value. 
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Look up light value. 
+
+<Returns>
+    TODO
+
+-----
+
+==== get_acceleration() ====
+
+<Purpose>
+    Get the most recently received accelerometer value. 
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Look up accelerometer value. 
+
+<Returns>
+    A list of floats [(acceleration on the) X axis, Y axis, Z axis], e.g., [0.3830723, -0.8036005, 10.036493].
+
+-----
+
+==== get_magnetic_field() ====
+
+<Purpose>
+    Get the most recently received magnetic field value.
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Look up magnetic field value. 
+
+<Returns>
+    A list of floats [(magnetic field value for) X axis, Y axis, Z axis], e.g., [29.5, 206.875, -119.625].
+
+
+-----
+
+==== get_orientation() ====
+
+<Purpose>
+    Get the most recently received orientation value. 
+
+<Arguments>
+    None. 
+
+<Exceptions>
+    None. 
+
+<Side Effects>
+    None.
+
+<Resource Consumption>
+    Look up orientation value. 
+
+<Returns>
+    A list of doubles [azimuth, pitch, roll], e.g., [-0.17154279351234436, 0.080450139939785, -0.03844258934259415].
+
+[[BR]]
+
+=== !WiFi network ===
+
+==== is_wifi_enabled() ====
+
+<Purpose>
+  Return if !WiFi is enabled on this device (True or False). 
+
+<Arguments>
+  None
+
+<Exceptions>
+  None. 
+
+<Side Effects>
+  None.
+
+<Resource Consumption>
+  Lookup if !WiFi is enabled on the device. 
+
+<Returns>
+  A boolean variable indicating if !WiFi is enabled on the device. 
+
+-----
+
+==== get_wifi_connection_info() ====
+
+<Purpose>
+  Return information about the !WiFi network currently connected to. 
+
+<Arguments>
+  None
+
+<Exceptions>
+  None. 
+
+<Side Effects>
+  None.
+
+<Resource Consumption>
+  Lookup !WiFi connection information on the device. 
+
+<Returns>
+  !WiFi connection information as a dict, and is returned in this format:
+
+{{{  
+  {
+    "ssid": network SSID (string),
+    "bssid": network BSSID, i.e. MAC address (string),
+    "rssi": received signal strength in dBm (negative int),
+    "supplicant_state": current WPA association state (string),
+    "link_speed": link speed in MBps (int),
+    "mac_address": this device's WiFi interface MAC (string),
+    XXX "ip_address": this device's IP address (XXX int, byte quadruples reversed!),
+    XXX "network_id": XXX (int),
+    "hidden_ssid": True if the SSID is not broadcast (bool)
+  }
+}}}
+
+-----
+
+==== do_wifi_scan() ====
+
+<Purpose>
+  Return !WiFi connection info on this device. 
+
+<Arguments>
+  None
+
+<Exceptions>
+  None. 
+
+<Side Effects>
+  None.
+
+<Resource Consumption>
+  Scan the !WiFi network from the device. 
+
+<Returns>
+  !WiFi scan results wifi_data as a HUGE dict of this format, with one dict for each network found:
+
+{{{
+  {
+    "ssid": network SSID (string),
+    "bssid": network BSSID, i.e. MAC address (string),
+    "frequency": frequency in MHz (int),
+    "level": received signal strength in dBm (negative int),
+    "capabilities": security features supported by the network (string)
+  }
+}}}
+
+== Running an Experiment ==
+To run a sensor application, we need to:
+
+1. Run the experiment manager seash. Seash allows you to control the files running in sandboxes you control. 
+
+{{{
+python seash.py
+}}}
+
+2. Log in with your key. For example, your log in name is john,
+
+{{{
+!> loadkeys john
+!> as john
+john@ !>
+}}} 
+
+3. Locate resources you can use:
+
+{{{
+john@ !> browse
+Added targets: %1(10.0.1.1:1224:v9), %2(10.0.1.2:2888:v9)
+Added group 'browsegood' with 2 targets
+}}}
+
+The command browse produced the output that shows resources (targets) you can control. 
+
+4. Access the resources
+
+{{{
+john@ !> on %1
+john@%1 !> upload dylink.r2py
+john@%1 !> upload sensorlib.r2py
+....
+}}}
+
+If your experiment code is called accelerometer.r2py, then run it as follows:
+
+{{{
+john@%1 !> start dylink.r2py encasementlib.r2py sensor_layer.r2py [any blur layers] accelerometer.r2py
+}}}
+
+
+To read the results from your experiment, 
+
+{{{
+john@%1 !> show log
+}}}
+
+== Implementing Sensor Blur Layers ==
+
+=== What is a Blur Layer? === 
+
+In Sensibility Testbed, a blur layer is a layer between a user program and the set of API provided by the Sensibility Testbed. It is used to control the access or use of the interface. It typically blurs the returned data in order to meet a certain privacy requirement.
+
+For example, some Sensibility interface can return sensitive data from a mobile device, such as the !WiFi MAC address, GPS location, etc. These data is obtained from the device OS. When a user program uses these interface, if a blur layer is in place, the blur layer will interpose on the call, and manipulate the data returned by the OS before it is returned to the user program. 
+
+=== An Example to Blur !WiFi MAC Address ===
+
+==== Customizing the Desired Function ====
+Here we use the function `get_wifi_connection_info()` as an example. It returns information about the !WiFi network the device is currently connected to, such as !WiFi access point's (or the router's) SSID, MAC address, the device's MAC address, and so on. Suppose we would like to mask certain parts of the router's and device's MAC addresses such that a user program would only know the manufacturer ID. We first define a customized version of `get_wifi_connection_info()` as follows:
+
+{{{
+def blurred_get_wifi_connection_info():
+  wifi = get_wifi_connection_info()
+
+  # Truncate AP and device MAC addresses to the manufacturer ID
+  wifi["bssid"] = wifi["bssid"][0:8] + 3*":00"
+  wifi["mac_address"] = wifi["mac_address"][0:8] + 3*":00"
+
+  return wifi
+}}}
+
+The name of this new function is called `blurred_get_wifi_connection_info()`. Similarly, if we like to blur other parts of the !WiFi information, we can define another version of `get_wifi_connection_info()`.
+
+==== Writing the Blur Layer ====
+After defining `blurred_get_wifi_connection_info()`, we need to map it to the original API function `get_wifi_connection_info()`. To do this, we need a Repy library called `encasementlib` which allows us to replace an internal function with a customized one. `encasementlib` has a data structure called `CHILD_CONTEXT_DEF` that maps the function signatures. In our !WiFi MAC address example, we need to write the following:
+
+{{{
+1. CHILD_CONTEXT_DEF["get_wifi_connection_info"] = {
+2.     "type": "func",
+3.     "args": None,
+4.     "return": dict,
+5.     "exceptions": "any",
+6.     "target": blurred_get_wifi_connection_info,
+7. }
+}}}
+
+Line 1 indicates that this `CHILD_CONTEXT_DEF` is to replace the internal function `get_wifi_connection_info()`. Line 2 - 5 define the function's type, arguments, return values, and any potential exceptions. Line 6 indicates that this internal function `get_wifi_connection_info()` will be replaced by `blurred_get_wifi_connection_info()`, once this blur layer is in effect. 
+
+In order for this blur layer to take effect, we need to call `secure_dispatch_module()` at the end of the code. It only should be called once.
+
+To summarize, we can write the complete !WiFi MAC address blur layer as follows:
+
+{{{
+def blurred_get_wifi_connection_info():
+  wifi = get_wifi_connection_info()
+
+  # Truncate AP and device MAC addresses to the manufacturer ID
+  wifi["bssid"] = wifi["bssid"][0:8] + 3*":00"
+  wifi["mac_address"] = wifi["mac_address"][0:8] + 3*":00"
+
+  return wifi
+
+
+CHILD_CONTEXT_DEF["get_wifi_connection_info"] = {
+    "type": "func",
+    "args": None,
+    "return": dict,
+    "exceptions": "any",
+    "target": blurred_get_wifi_connection_info,
+}
+
+
+secure_dispatch_module()
+}}}
+
+Let's save this file as `blur_wifi.r2py`.
+
+=== Running the Blur Layer ===
+To run a user program with one or more blur layers, we need the following files: 
+
+* `dylink.r2py` that allows us to import Repy libraries;
+* `encasementlib.r2py` that allows us to replace internal functions with a customized version;
+* `sensor_layer.r2py` that supports access to device sensors from Repy;
+* the blur layer (in this case, `blur_wifi.r2py` as defined above), and 
+* the user program.
+
+To run the user program in `seash`, we do
+{{{
+start dylink.r2py encasementlib.r2py sensor_layer.r2py [any blur layers] user-program
+}}}
+
+As a result, every time the user program calls `get_wifi_connection_info`, it will actually call `blurred_get_wifi_connection_info`, so the !WiFi router and device's MAC addresses will have the last three bytes all 0's.
+
+=== Further Reading ===
+If you would like to know more, please refer to [https://seattle.poly.edu/wiki/RepyV2SecurityLayers this page] for how to write more complex blur layers.

@@ -1,0 +1,116 @@
+{{{#!comment
+= A Note to SAS 2015 Workshop Attendees =
+
+To set up a working environment for developing sensor apps with Sensibility Testbed, please install the following:
+ * On your laptop
+  * **Python 2.7** from [https://www.python.org/downloads/] ( [https://goo.gl/GuswMs] )
+  * **Sensibility Testbed Demokit** from [https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip] ( [https://goo.gl/VGZZ1v] )
+
+ * On your Android device:
+  * **SL4A** from https://android-scripting.googlecode.com/files/sl4a_r6.apk
+[[Image(sl4a.png)]]
+  * Optionally, **Advanced Wifi Lock** from https://play.google.com/store/apps/details?id=opotech.advancedwifilockfree
+[[Image(wifilock.png)]]
+
+
+The instructions to follow along later can be found [https://sensibilitytestbed.com/projects/project/wiki/setup here]. We will go through all of the individual steps during the course of the workshop!
+
+------
+}}}
+
+[[PageOutline]]
+
+= About Sensibility Testbed =
+
+Ever wondered what science could achieve if any researcher can get data from other people's smartphones? Imagine that we would simply write a few lines of code, fire it up on a number of strangers’ phones, and within minutes we would know where the dead spots of our mobile data plans are. We could also have a zero-cost navigation system when no GPS or any other location services are available: we could achieve this by establishing a Bluetooth connection with a neighboring device and get the location data from it. If we constantly monitor accelerometer data on mobile devices, we can detect vibrations within the frequency and intensity range of seismic waves, and assist distributed earthquake detection. These all sound fantastic, except that who would let us get data off their devices? Our friends and family would probably trust us. Other people? Not so much. 
+
+The privacy and security challenges on mobile devices have increased dramatically over the years. While having apps post tweets to user’s Twitter account without asking for permission is seriously off-putting, hacked apps that let criminals break into individual’s bank account are detrimental. Running code to collect data from smartphones is much more complex than it sounds. We not only need to ensure the security of a device so that the code that does the data collection cannot damage or hack into the device. We also must protect the privacy of a device owner so that the code cannot eavesdrop phone conversations, steal passwords, etc.
+
+Sensibility Testbed is a smartphone testbed that allows researchers to run code and perform measurements on others’ smartphones for research purposes. It ensures the security of user-owned devices, and the privacy of user-generated data. The usage model of Sensibility Testbed is unique in that it manages how device owners make their devices accessible to different research communities without putting their devices at risk. Meanwhile, it offers technical resources that allow researchers to collect data from remote mobile devices without impairing the device owner’s privacy. As an added bonus, different research groups can pick, choose, share and reuse each others' user base. 
+
+= Sensibility Testbed: Tutorial and Demo =
+'''Download'''
+To donate resources to the Sensibility Testbed, please [https://play.google.com/store/apps/details?id=com.sensibility_testbed download our app from Google Play]. 
+
+'''Setup'''
+The setup and instructions of how to run code on the Sensibility Testbed, and the API to access currently supported sensors can be found at [https://sensibilitytestbed.com/projects/project/wiki/setup project demo page].
+
+'''Local debug'''
+If you would like to debug Sensibility code locally on your phone, [https://sensibilitytestbed.com/projects/project/wiki/localdebug here] is a way to do it.
+
+= Sensibility Testbed Overview =
+Researchers run experiments in Sensibility Testbed by writing code for a restricted, Python-based sandbox. This is the same security-reviewed Repy (Restricted Python) sandbox used in the [https://seattle.poly.edu/ Seattle] testbed [4]. This sandbox has been deployed on the Seattle testbed over the last 6 years. Our experience has shown that the risk of it being faulty is very low. The Repy sandbox is restricted in that its API limits what a sandboxed program can do: reading from and writing to the file system can only occur in a per-experiment directory; sending and receiving data via the network interface cannot exceed a configured rate; CPU, memory and battery consumption cannot exceed a limit, etc. Therefore, the sandbox isolates the program from the rest of the device. More importantly, the sandbox allows us to interject code to implement privacy policies and control what happens with the data gathered on the device.
+
+== Why Sensibility Testbed == 
+
+First, in our testbed, device owners participate as volunteers, and researchers request these devices through our server. This server, which is called a clearinghouse, mediates remote device access, but does not store any personal data. As a result, Sensibility Testbed relieves researchers from recruiting participants and allows different groups to share all the devices participated in the testbed. Additionally, Sensibility Testbed does not require researchers to write full-fledged Android apps to perform experiments. Instead, it provides an easy-to-use Python-like programming interface. Last but not the least, using Sensibility Testbed, device owners do not need to trust the researchers who run code on their devices. As you will see later in this article, Sensibility Testbed provides a secure, sandboxed environment for anyone to run experiment code on Android devices. This can effectively prevent potential security and privacy breaches. If you are interested in how to setup a clearinghouse, please refer to [https://sensibilitytestbed.com/projects/project/wiki/clearinghouse this page].
+
+{{{#!comment
+First, smart devices produce immensely valuable data for researchers across a wide variety of disciplines. As an interface between our everyday life and the physical world, these devices present valuable data for critical scientific and social pursuits. If properly harnessed, the embedded cellular, GPS, !WiFi, Bluetooth, camera, accelerometer, gyroscope, etc., can objectively record information gathered from the users’ perspective for the benefit of all.
+
+Second, the computational power of modern smartphones is substantial — a fact that has not gone unnoticed by criminals. Although other services like cloud computing provide substantial computing power, dedicated cloud infrastructure has limited host and network heterogeneity, limited scalability, and lack a deployment path on end-user systems. Smartphones, laptops, and tablets are already on the same network as the user and thus minimize latency, which would provide deep insight into parts of the Internet that were previously invisible. 
+
+With our blend of herbs and spices that leverage information sensing capabilities, performance isolation and security mechanism, Sensibility Testbed will bring benefit to people-centric computing services and society, leading to a digital ecosystem in harmony.
+
+== Why Seattle Sensors == 
+
+For example, it is possible for researchers to understand carrier and device performance differences ![1], increase wireless network performance leveraging user mobility ![2], improve navigation and personalized trip management ![3], detect earthquakes and tsunamis accurately ![4]. Estimation of traffic in an area can help transportation scientists refine usage models for environmental impacts ![5]. Health sciences, sociology, or any domain concerned with the movements of people and the impacts of these movements could be explored ![6]. But up till now, there was no unified ways to harvest these opportunities.
+}}}
+
+== How Sensibility Testbed Works ==
+
+In Sensibility Testbed, there are three categories of interacting parties: mobile devices owned by ordinary people, with our app installed; a clearinghouse server that discovers and configures participating devices; and researchers wanting to run experiments on mobile devices (see Figure 1). These three parties interact as follows. Mobile devices provide resources and data for researchers to use in their experiments. As mentioned above, researchers’ code runs in a sandbox on a remote device that isolates the code from the rest of the device host system. Meanwhile, our clearinghouse server helps researchers acquire and manage devices, and enforces policies specified by the researcher’s Institutional Review Board (IRB), thus protecting device owners' personal information. Finally, researchers use their local machines to initiate and control experiments in Sensibility Testbed. They use an experiment tool (ET) to deploy and run experiments in sandboxes on remote devices that are acquired through the clearinghouse.
+
+||[[Image(arch-small.jpg, align=center)]]||
+'''Figure 1: Sensibility Testbed architecture.'''
+
+In the following, let us suppose a researcher, Bob, runs an experiment on a device owner, Alice's smartphone. 
+To understand how policies are implemented, we need to start with the Sensibility Testbed app. The app on Alice’s device contains a native Android portion, and our Repy sandbox. When Alice starts the app, the native code initializes a Python interpreter, launches the Repy sandbox, and starts the communication between the device and our clearinghouse. The sandbox’s restricted, secure API provides calls to file system, networking, threading functions, and so on. Therefore, Bob’s code can read files, send data through the network, etc., from Alice’s device. However, the original Repy sandbox does not include calls specific to mobile devices, such as GPS location, !WiFi network, Bluetooth, accelerometer, cellular network, etc.
+
+To obtain smartphone-specific data, we first implemented our sensor API using native code in the Sensibility Testbed Android app. The Repy sandbox then uses RPC to invoke the corresponding Android code, and returns the data from native code to a sandboxed program. The Repy sandbox thus defines a set of sensor API as higher level calls, such as {{{get_location()}}}, {{{get_wifi()}}}, {{{get_accelerometer()}}}, etc. As such, the original Repy interface and the added sensor API together provide the complete "OS level" sandbox kernel on a mobile device, as shown in Figure 2. 
+
+||[[Image(blur-small.jpg, align=center)]]||
+'''Figure 1: Sensibility Testbed blur policies.'''
+
+Finally, this sandbox kernel determines how policies are implemented by affecting API calls. It can interpose on a call and modify the data returned, or control the frequency a call can be made over time. As mentioned above, Bob provided his IRB policies through our clearinghouse. So before Bob runs his experiment, the clearinghouse instructs the sandbox on Alice’s device to restrict sensor access in accordance with these IRB policies. Using the {{{get_location()}}}call as an example, when Bob's code requests location data from Alice’s device, the Repy sandbox first invokes the location-related Android code. As the location data is returned, Bob’s IRB policy indicates that the returned location coordinates should be blurred to the nearest city to Alice’s device, instead of her actual location. As a result, the sandbox returns an approximate location to Bob’s program. Furthermore, as Bob’s IRB policy disallows collecting information about cell tower IDs, the access to cell IDs is blocked entirely on Alice’s device. Similarly, other information like !WiFi SSID can be blurred to a hashed string, the frequency to access an accelerometer can be restricted to prevent inferring passwords from the movement and tilt of the device, and so on. As shown in Figure 2, different policies can be stacked together as a set of filters for different sensors, before a sandboxed program can access the sensor data.
+
+= Sensor API =
+This page lists all the [https://sensibilitytestbed.com/projects/project/wiki/sensors currently supported sensors], and how to use our API to access these sensors.
+
+= Related Publications and Websites =
+{{{#!comment
+![1] J. Huang, Q. Xu, B. Tiwana, Z. M. Mao, M. Zhang, and P. Bahl. Anatomizing application performance differences on smartphones. In Proceedings of the 8th international conference on Mobile systems, applications, and services, pages 165–178. ACM, 2010.
+
+![2] L. Ravindranath, C. Newport, H. Balakrishnan, and S. Madden. Improving wireless network performance using sensor hints. In Proceedings of USENIX conference on Networked systems design and implementation, 2011.
+
+![3] A. Thiagarajan, L. Ravindranath, H. Balakrishnan, S. Madden, L. Girod, et al. Accurate, low-energy trajectory mapping for mobile devices. In Proceedings of the 8th USENIX conference on Networked systems design and implementation, pages 20–20. USENIX Association, 2011.
+
+![4] M. Faulkner, M. Olson, R. Chandy, J. Krause, K. Chandy, and A. Krause. The next big one: Detecting earthquakes and other rare events from community-based sensors. In Information Processing in Sensor Networks (IPSN), 2011 10th International Conference on, pages 13–24. IEEE, 2011.
+
+![5] T. S. Lena, V. Ochieng, M. Carter, J. Holgu ́n-Veras, and P. L. Kinney. Elemental carbon and pm (2.5) levels in an urban community heavily impacted by truck traffic. Environmental Health Perspectives, 110(10):1009, 2002.
+
+![6] J. Goldman, K. Shilton, J. Burke, D. Estrin, M. Hansen, N. Ramanathan, S. Reddy, V. Samanta, M. Srivastava, and R. West. Participatory sensing: A citizen-powered approach to illuminating the patterns that shape our world. Foresight & Governance Project, White Paper, 2009.
+}}}
+
+![1] J. Cappos, L. Wang, R. Weiss, Y. Yang, and Y. Zhuang. !BlurSense: Dynamic fine-grained access control for smartphone privacy. Sensors Applications Symposium (SAS), 2014. ([http://isis.poly.edu/~jcappos/papers/cappos_blursense_sas_14.pdf pdf])
+
+![2] A. Rafetseder, F. Metzger, L. Puhringer, K. Tutschku, Y. Zhuang, and J. Cappos. Sensorium–a generic sensor framework. Praxis der Informationsverarbeitung und Kommunikation, 36(1):46–46, 2013. ([http://isis.poly.edu/~jcappos/papers/rafetseder_sensorium_pik_13.pdf pdf])
+
+![3] Open3GMap. https://o3gm.cs.univie.ac.at/
+
+![4] J. Cappos, A. Dadgar, J. Rasley, J. Samuel, I. Beschastnikh, C. Barsan, A. Krishnamurthy, T. Anderson. Retaining Sandbox Containment Despite Bugs in Privileged Memory-Safe Code. ACM Conference on Computer and Communications Security (CCS'10, [http://isis.poly.edu/~jcappos/papers/cappos_seattle_ccs_10.pdf pdf])
+
+= Project Blog =
+
+Here is the [http://seattlesensor.wordpress.com/ blog] which reports some of our latest progress. 
+
+= Appropriate Use Panel =
+
+For information how to obtain our data or share sensor data with us, please visit [https://sensibilitytestbed.poly.edu/projects/project/wiki/AppropriateUsePanel Sensibility Testbed Appropriate Data Use Panel] page. 
+
+= People =
+* [http://isis.poly.edu/~jcappos/ Prof. Justin Cappos]
+* [http://cs.ubc.ca/~yyzh/ Yanyan Zhuang]
+* [http://cs.univie.ac.at/fc-team/infpers/Albert_Rafetseder/ Albert Rafetseder]
+* Prof. Richard Weiss
+* [http://crissp.poly.edu/?page_id=1810 Dennis Mirante]

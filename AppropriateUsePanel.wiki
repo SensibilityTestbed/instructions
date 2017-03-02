@@ -1,0 +1,15 @@
+= Seattle Sensors Appropriate Data Use Panel =
+
+With our Seattle Sensors platform maturing and more data being captured, we would like to share data with other institutions, and vice versa. Therefore, we organized a committee named '''Seattle Sensors Appropriate Data Use Panel'''. The use of shared datasets should comply with the IRB policies of a specific institution. If you are interested in using our data, here are a few steps to follow: 
+
+* Please contact your local IRB for permission of shared dataset use;
+* After being approved by your local institute, please send your approval and justification to our Seattle Sensors Appropriate Data Use Panel; 
+* Our panel will conduct a review of your request, and get back to you in two weeks (usually much faster!). If your request is approved, we will provide restricted access to the requested user sensors on our deployed infrastructure. 
+
+In case you also have data to share with us, this process would be the same except you will disclose data responsibly to us. 
+
+== Panel Members ==
+* [http://webhome.cs.uvic.ca/~yyzhuang/ Yanyan Zhuang]
+* [http://isis.poly.edu/~jcappos/ Prof. Justin Cappos]
+* [http://www.hpl.hp.com/people/rick_mcgeer/ Prof. Rick McGeer]
+* [http://webhome.cs.uvic.ca/~ycoady/ Prof. Yvonne Coady]

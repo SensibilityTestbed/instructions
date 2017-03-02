@@ -1,0 +1,241 @@
+[[PageOutline]]
+
+= How to setup Sensibility Testbed =
+
+To setup and do experiments on the Sensibility Testbed, we need the following steps: 
+
+1. Building an installer (to install on your device);
+2. Installing the installer you just created; 
+3. Setting up the environment to run an experiment (we call this environment ''demo kit'' in the following), and 
+4. Running your experiment!
+
+To complete these steps, you will need (1) a desktop or laptop, and (2) an Android phone. It is also recommended that you create a working directory on your desktop or laptop, for storing downloaded files (your user keys, demo kit, etc). The following is a step-by-step guide to complete the steps.
+
+== Building an installer ==
+Go to the ​[https://sensibilityclearinghouse.poly.edu/custominstallerbuilder/fastlane Custom Installer Builder (CIB) Fastlane site]. It will look similar to Figure 1 below.
+
+||[[Image(cib_fastlane.png, align=center)]]||
+'''Figure 1: Custom Installer Builder (CIB) screenshot'''
+
+The builder creates a pair of cryptographic keys for you. Download both the public and private keys before continuing. Then, proceed to open the CIB page on your Android device, either by typing the URL highlighted in yellow, or by scanning the QR code. Follow the page's instructions to complete the setup of Sensibility Testbed on your Android device.
+
+'''Make sure to use the full URL, including the long hex string at the end! ''' Only the full URL identifies your install and ensures that the cryptographic keys can be used on it!
+
+
+== Setting up demo kit ==
+
+* On you laptop, download the [https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip Demokit] and unzip it using {{{unzip sensibility-testbed-demokit.zip}}}. This will create a folder named {{{sensibility-testbed-demokit}}}.
+
+* Unzip both of the key archives ({{{public_keys.zip}}} and {{{private_keys.zip}}}) downloaded previously, and you will get two key directories, {{{public_keys}}} and {{{private_keys}}}. Copy the key files from these two directories ('''Note''': key files, not key directories) into the {{{sensibility-testbed-demokit}}} directory. Then, {{{cd}}} into this directory and run:
+{{{
+$ python seash.py
+- You can save seash's current state using 'savestate' command.
+
+Enabled modules: clearinghouse, factoids, geoip, modules, variables 
+
+ !> 
+}}}
+
+* Now, {{{seash}}} needs your key pair to contact your devices, so you will first load user keys for the username you selected on the CIB site (here, ''"user"'') with {{{loadkeys}}}. Next, {{{browse}}} tells {{{seash}}} to look for devices installed with these keys.
+{{{
+ !> loadkeys user
+ !> as user
+user@ !>  browse
+['102cf630b57ffea6a9a744ec247c462ddaba65eb:1224']
+Added targets: %1(102cf630b57ffea6a9a744ec247c462ddaba65eb:1224:v1)
+Added group 'browsegood' with 1 targets
+user@ !> 
+}}}
+
+ If you installed the installer with the same keys on your device, then you will see something similar to the above. This tells you that ''seash'' has discovered the device.
+
+ '''Important:''' If {{{browse}}} returned fewer devices than expected, or certain devices timed out, wait and re-execute the command. Or, you could exit ''seash'', reload keys, and browse again.
+
+== Running an experiment ==
+
+Start running code. First, make yourself {{{on}}} the device (notice the change of user@): 
+
+{{{
+user@ !> on %1
+user@%1 !> 
+}}}
+
+If you have more than one devices, then `browse` will return more than one targets. To control all of the devices, run `on browsegood` instead of `on %1` above.  
+
+Next, upload the required sensor access libraries to your target. (The demokit includes them in a folder named `sensorlib` for your convenience.)
+
+{{{
+user@%1 !> uploaddir sensorlib
+}}}
+
+This will print out the uploaded files' names as it proceeds. Finally, {{{upload}}} the code you would like to run, and use {{{show files}}} to verify they are correctly uploaded. We'll test the accelerometer in the following example (can be downloaded [https://github.com/SensibilityTestbed/demo/blob/master/sas16/accelerometer.r2py here]), but the other sensor examples work the same:
+
+{{{
+user@%1 !> upload accelerometer.r2py
+user@%1 !> show files
+Files on '102cf630b57ffea6a9a744ec247c462ddaba65eb:1224:v1': 'accelerometer.r2py ......'
+}}}
+
+ Start the code as follows, and use {{{show log}}} to see the output from your code:
+
+{{{
+
+user@%1 !> execute accelerometer.r2py
+
+user@%1 !> show log
+Log from '102cf630b57ffea6a9a744ec247c462ddaba65eb:1224:v1':
+Running program: dylink.r2py
+Arguments: ['accelerometer.r2py']
+========================================
+Using port 63104 to get sensor data.
+[None, None, None] 
+[0.14775084999999999, -0.21435546999999999, 10.3607025] 
+[0.16679382000000001, -0.20007324000000001, 10.396407999999999] 
+[0.32151794, 7.2873840000000003, 5.6963654000000004] 
+[-1.7565459999999999, 5.5806579999999997, 13.958633000000001] 
+......
+}}}
+
+These are accelerations along the x/y/z axes. The z value will be close to 9.8 if the phone is stationary, due to gravity.
+
+
+Once the experiment is finished, use {{{stop}}} to stop the code.
+{{{
+user@%1 !> stop
+}}}
+
+= How to write an experiment on Sensibility Testbed =
+
+== Repy API ==
+
+The experiment code in Sensibility Testbed is written in Repy (Restricted Python). The Repy API can be found [https://github.com/SeattleTestbed/docs/blob/master/Programming/RepyV2API.md here]. The examples of using the API can be found on [https://github.com/SeattleTestbed/docs/blob/master/Programming/RepyV2Tutorial.md this page].
+
+== Sensor library ==
+
+Writing an experiment on Sensibility Testbed is straight-forward. All the library API can be found on [https://sensibilitytestbed.com/projects/project/wiki/sensors this page].
+
+== Examples ==
+
+=== Accelerometer Example ===
+
+We first need to start sensing on your phone by calling
+   
+{{{
+start_sensing(sensor_number, delay_time)
+}}}
+   
+Such that your phone will start recording sensor data. sensor_number is any of the following integer: 1 = All, 2 = Accelerometer, 3 = Magnetometer and 4 = Light; delay_time: minimum time between readings in ms, also in integer. Then call
+   
+{{{
+get_acceleration()
+}}}
+   
+This will return the most recently received accelerometer value in a list, e.g., [0.3830723, -0.8036005, 10.036493] as the acceleration on the X, Y, and Z axis. To stop recording sensor data, call
+   
+{{{
+stop_sensing()
+}}}
+
+Here is a complete example of getting 100 sample of accelerometer data. The `log` statement prints the data to the console.
+
+{{{
+ITER = 100  
+start_sensing(1, 0)
+
+for j in xrange(ITER):
+  data = get_acceleration()
+  log(data, '\n')
+
+stop_sensing()
+}}}
+
+=== Location Example ===
+Location on Android devices depends on external services (GPS, !WiFi or cellular networks). We highly recommend that you include some error handling in your code, such as
+
+{{{
+MAX_TIME = 5
+starttime = getruntime()
+location = None
+
+while(getruntime() - starttime < MAX_TIME):
+  try:
+    location = get_location()
+    if location:
+      break
+  except Exception: 
+    sleep(0.02)
+}}}
+
+The call `get_location()` (details in the next section) returns real-time location data from the device. However, when this call cannot get any location data from those external services, or `location == None`, we can try to get the previously cached location on the device, using `get_lastknown_location()`:
+
+{{{
+if not location:
+  try:
+    location = get_lastknown_location()
+  except Exception: 
+    log("can't locate using get_lastknown_location().. exit!\n")
+    exitall()
+}}}
+
+The returned data can look like this: 
+
+{{{
+{'passive': {'bearing': 0, 'altitude': 0, 'time': 1459981813322L, 'longitude': -73.986397499999995, 'provider': 'network', 'latitude': 40.693336600000002, 'speed': 0, 'accuracy': 121.77899932861328}, 
+'network': {'bearing': 0, 'altitude': 0, 'time': 1459981813322L, 'longitude': -73.986397499999995, 'provider': 'network', 'latitude': 40.693336600000002, 'speed': 0, 'accuracy': 121.77899932861328}, 
+'gps': {'bearing': 333, 'altitude': 37, 'time': 1459957775679L, 'longitude': -73.992725109999995, 'provider': 'gps', 'latitude': 40.694136010000001, 'speed': 1.0307763814926147, 'accuracy': 15}}
+}}}
+
+Note that the location data returned comes from three different providers: network, GPS, and passive. The complete example can be found [https://github.com/SensibilityTestbed/demo/blob/master/sas16/location.r2py here].
+
+== Input arguments ==
+
+You can have input arguments to your experiment code. For example, 
+
+{{{
+user@%1 !> execute myprogram.r2py 1 2 3
+}}}
+
+`1`, `2` and `3` will be the input arguments for `accelerometer.r2py`. Use the `callargs` list variable to access them in your code: This snippet
+
+{{{
+log(callargs, '\n')
+}}} 
+
+will print out this list of strings of arguments:
+
+{{{
+['1', '2', '3']
+}}}
+
+== Saving data to a file ==
+
+Instead of printing data to the log console, you can save the data to a file on the device. Here is how to do this:
+
+{{{
+# open a file called datafile
+filename = "datafile"
+myfileobject = openfile(filename, True)
+
+data = "....."  # define the data you want to write in the file
+myfileobject.writeat(data, 0)  # write the data to the file, starting from offset 0
+
+# close the file
+myfileobject.close()
+}}}
+
+`filename` is a string that specifies the name of your data file. `myfileobject` is the file handler for the data file. In `openfile()`, `True` is a Boolean flag that specifies if the file should be created if it does not exist. If the file exists, this flag has no effect. `writeat()` seeks to an offset in the file (0 in this case) and then write the data to the file. 
+
+If you like to check if a file exists in the current directory, and if so, delete this file. This is how to do it:
+
+{{{
+filelist = listfiles()  # lists all the files in the current directory
+
+if filename in filelist:
+  removefile(filename)   # delete the file
+}}}
+
+The Repy file API can be found [https://seattle.poly.edu/wiki/RepyV2API#Filefunctions here].
+
+= Please tell us how you think! = 
+
+Please take a moment to fill out our [https://docs.google.com/forms/d/1-Z05PSQfS7_Snq8gIaF3cDSK1IhFaf9uB3CWaixrs2w/viewform?c=0&w=1 feedback form]. Your comments and feedback will be tremendously helpful to us!
