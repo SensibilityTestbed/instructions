@@ -1,12 +1,14 @@
-# Sensibility API functions
+# Sensibility Sensor API functions
 
-This documents describes the function calls specific to the Sensibility Testbed
-Sandbox. For the general Repy API (Repy is the programming language available to
-the Sensibility Testbed Sandbox) check out the [Repy V2 Library Reference](https://github.com/SeattleTestbed/docs/blob/master/Programming/RepyV2API.md)
+This documents describes the sensor function calls specific to the
+Sensibility Testbed Sandbox. For other, non-sensor calls available
+inside the Sensibility Testbed Sandbox,) check out the
+[Repy V2 Library Reference](https://github.com/SeattleTestbed/docs/blob/master/Programming/RepyV2API.md)
 and the [RepyV2 Tutorial](https://github.com/SeattleTestbed/docs/blob/master/Programming/RepyV2Tutorial.md).
 
 Note that some of the following functions might not be available on your
-Android device.
+Android device. Calling them will result in `None` or an empty list `[]`
+being returned.
 
 ## Overview
 __Sensor functions__
