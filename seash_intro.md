@@ -53,7 +53,6 @@ user@browsegood !>
 
 ### Sending Commands
 
-09876543210987654321098765432109876543210987654321098765432109876543210987654321
 With the `seash` session all set up, here are the most important control
 commands.
 
