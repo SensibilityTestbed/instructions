@@ -8,20 +8,20 @@ sandbox hosts experiments.
 
 
 ### Install Python 2.7
-The experiment management tool is written in the Python programming language.
+The experiment manager is written in the Python programming language.
 Please make sure that you have Python 2.7 installed on your PC or laptop.
 (You can download it from [the official Python website](https://www.python.org/downloads/release)).
 
-### Download and Unzip the Experiment Management Tool
+### Download and Unzip the Experiment Manager
 
 With Python 2.7 installed, download and unzip
-[`seash`, the experiment management tool](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip).
+[`seash`, the experiment manager](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip).
 Remember where you unzipped to, we will return to this directory soon.
 
 ### Configure and Install the Sensibility Testbed app
 
 Proceed to install a customized version of the Sensibility Testbed app
-that will be linked to your experiment management tool:
+that will be linked to your experiment manager:
 
 On your laptop, browse to the [Sensibility Custom Installer Builder](https://alpha-ch.poly.edu/cib/fastlane).
 Download the experimenter key zipfiles. They contain one file each,
