@@ -6,7 +6,7 @@ Python-like sandbox with access to a smartphone's or tablet's sensors.
 
 
 
-# The 30-Second Overview
+# Quick Overview
 
 Prerequisite: You need to have [Python 2.7](https://www.python.org/downloads/release)
 installed on your laptop.
