@@ -48,3 +48,23 @@ Added group 'browsegood' with 1 target
 user@ !> on browsegood 
 user@browsegood !> 
 ```
+
+
+
+### Sending Commands
+
+09876543210987654321098765432109876543210987654321098765432109876543210987654321
+With the `seash` session all set up, here are the most important control
+commands.
+
+* `run PROGRAM` uploads the named program to the device and starts it.
+* `show log` prints the sandbox log that an experiment can write into.
+* `stop` tells the sandbox to stop the current program.
+
+Other useful commands include:
+
+* `upload FILE` copies the file from the laptop to the sandbox.
+* `start UPLOADEDFILE` executes a file that was previously uploaded.
+* `download FILE` copies the file from the sandbox to the laptop.
+* `reset` removes all files from the sandbox, and clears the log.
+
