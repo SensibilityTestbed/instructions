@@ -13,8 +13,9 @@ installed on your laptop.
 
 1. On your laptop, browse to the [Sensibility Custom Installer Builder](https://alpha-ch.poly.edu/cib/fastlane).
 2. Using your phone,
-  * scan the QR code, and
-  * install Sensibility Testbed app from Google Play.
+  * scan the QR code,
+  * install and open the Sensibility Testbed app from Google Play, and
+  * tap the "Install" button in the app.
 3. Back on your laptop, download and unzip
  * the [experiment management tool](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
  * the public and private key for your custom installer
