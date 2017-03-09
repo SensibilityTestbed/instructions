@@ -1,6 +1,6 @@
-# An Introduction to `seash`, the Experiment Management Tool
+# An Introduction to `seash`, the Experiment Manager
 
-`seash` is Sensibility Testbed's experiment management tool. It is a
+`seash` is Sensibility Testbed's experiment manager. It is a
 Python 2 program that runs on your desktop or laptop, and uses
 cryptographic keys to access the customized Sensibility Testbed app
 installed on your Android smartphone or tablet.
