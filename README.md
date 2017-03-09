@@ -17,7 +17,7 @@ installed on your laptop.
   * install and open the Sensibility Testbed app from Google Play, and
   * tap the "Install" button in the app.
 3. Back on your laptop, download and unzip
- * the [experiment management tool](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
+ * the [experiment manager](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
  * the public and private key for your custom installer
 4. Use the experiment manager to run experiments on your smartphone
   or tablet.
@@ -28,7 +28,7 @@ installed on your laptop.
 * The [setup guide](Setup.md) walks you through the steps to set up the
   required software components on your laptop and smartphone.
 * The [`seash` guide](seash_intro.md) introduces the basic usage and
-  most important commands of the experiment management tool.
+  most important commands of the experiment manager.
 
 
 # Further Reading
