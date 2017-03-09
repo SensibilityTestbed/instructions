@@ -45,8 +45,8 @@ device, and set it the active target for the following control commands.
  ['192.168.99.10:1224']
 Added targets: %1(192.168.99.10:1224:v1)
 Added group 'browsegood' with 1 target
-user@ !> on browsegood 
-user@browsegood !> 
+user@ !> on %all 
+user@%all !> 
 ```
 
 
