@@ -4,6 +4,8 @@
 is an app for Android 5 (and higher) that provides a remote-controllable
 Python-like sandbox with access to a smartphone's or tablet's sensors.
 
+
+
 # The 30-Second Overview
 
 Prerequisite: You need to have [Python 2.7](https://www.python.org/downloads/release)
@@ -14,11 +16,18 @@ installed on your laptop.
   * scan the QR code, and
   * install Sensibility Testbed app from Google Play.
 3. Back on your laptop, download and unzip
- * the [experiment manager](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
+ * the [experiment management tool](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
  * the public and private key for your custom installer
 4. Use the experiment manager to run experiments on your smartphone
   or tablet.
 
+
+# Detailed Guides
+
+* The [setup guide](Setup.md) walks you through the steps to set up the
+  required software components on your laptop and smartphone.
+* The [`seash` guide](seash_intro.md) introduces the basic usage and
+  most important commands of the experiment management tool.
 
 
 # Further Reading
