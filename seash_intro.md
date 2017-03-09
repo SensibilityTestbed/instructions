@@ -67,3 +67,24 @@ Other useful commands include:
 * `download FILE` copies the file from the sandbox to the laptop.
 * `reset` removes all files from the sandbox, and clears the log.
 
+#### For Example
+
+Let's try out the `test_sensors.r2py` script that tests all sensor calls
+and logs the result.
+
+```
+user@browsegood !> run test_sensors.r2py
+user@browsegood !> # Wait for a few seconds for the program to execute
+user@browsegood !> show log
+========================================
+Running program: test_sensors.r2py
+Arguments: []
+========================================
+0.482042074203 get_bluetooth_info () {'local_address': '78:F8:82:..:..:..', 'state': 10, 'scan_mode': 20, 'local_name': 'NYU Vienna LG-H420'} 
+0.49251294136 get_bluetooth_scan_info () None 
+0.501909017563 is_wifi_enabled () True 
+0.509051084518 get_wifi_state () 3 
+0.516189098358 get_wifi_connection_info () {'ssid': '"..."', 'bssid': '00:1b:2f:..:..:.', 'network_id': 0, 'supplicant_state': 'COMPLETED', 'link_speed': 36, 'frequency': 2437, 'mac_address': '64:bc:0c:..:..:..', 'rssi': -68, 'ip_address': 174303424, 'hidden_ssid': False} 
+0.987251996994 get_wifi_scan_info () None
+```
+etc. etc.
