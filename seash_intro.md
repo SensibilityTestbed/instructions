@@ -70,7 +70,8 @@ Other useful commands include:
 #### For Example
 
 Let's try out the `test_sensors.r2py` script that tests all sensor calls
-and logs the result.
+and logs the result. (You may download it from
+[this link](https://raw.githubusercontent.com/aaaaalbert/sensor-doodles/master/test_sensors.r2py)).
 
 ```
 user@browsegood !> run test_sensors.r2py
