@@ -41,5 +41,7 @@ device can be controlled from your laptop.
 
 ### Done!
 
+The app shows check marks for every completed step. Four check marks
+indicate that you are all set up and ready to go!
 Your Android device can now run experiments under the control of your
 laptop. See the [`seash` introduction](seash_intro.md) for details.
