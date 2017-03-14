@@ -15,7 +15,8 @@ Please make sure that you have Python 2.7 installed on your PC or laptop.
 ### Download and Unzip the Experiment Manager
 
 With Python 2.7 installed, download and unzip
-[`seash`, the experiment manager](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip).
+[`seash`, the experiment manager](https://sensibilityclearinghouse.poly.edu/demokit/sensibility-testbed-demokit.zip)
+to your computer.
 Remember where you unzipped to, we will return to this directory soon.
 
 ### Configure and Install the Sensibility Testbed app
