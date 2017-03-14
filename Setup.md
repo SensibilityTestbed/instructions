@@ -30,7 +30,7 @@ Download the experimenter key zipfiles. They contain one file each,
 `seash` directory created previously.
 
 Now, using your Android device,
-* Scan the QR qode on the Custom Installer Builder page. This opens the Google Play app.
+* Scan the QR code on the Custom Installer Builder page. This opens the Google Play app.
 * Choose to "Install", then "Open" the app.
 * Tap the app's "Install" button.
 
