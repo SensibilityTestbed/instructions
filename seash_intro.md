@@ -21,7 +21,7 @@ follow the [setup guide](Setup.md).
 This results in the following:
 
 ```
-$ cd path/to/demokit
+$ cd path/to/sensibility-testbed-demokit
 $ python seash.py
 - You can press the Tab key to enable tab complete when typing commands.
 
