@@ -1,10 +1,10 @@
 # Setting up a Sensibility Testbed development environment
 
 This document explains how to set up a development environment for
-sensor-enabled experiments with Sensibility Testbed. A desktop or
-laptop computer will serve as the *experiment manager*, and an Android
-smartphone or tablet will run the *Sensibility Testbed app* whose
-sandbox hosts experiments.
+sensor-enabled experiments with Sensibility Testbed. You will run the
+*experiment manager* program on a desktop or laptop computer, and the
+*Sensibility Testbed app* whose sandbox hosts experiments on an
+Android smartphone or tablet.
 
 
 ### Install Python 2.7
