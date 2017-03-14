@@ -34,7 +34,8 @@ Now, using your Android device,
 * Choose to "Install", then "Open" the app.
 * Tap the app's "Install" button.
 
-The app first installs Python on your Android device, and then sets up
+The app first installs Python on your Android device, then downloads
+the custom installer you created previously, and finally sets up
 the Sensibility Testbed nodemanager component so that sandboxes on your
 device can be controlled from your laptop.
 
